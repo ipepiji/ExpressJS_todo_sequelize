@@ -4,8 +4,10 @@ module.exports.create = function (req, res, next) {
     let model = new User(req.body);
     model.save()
         .then((result) => {
-            if (!result || result.length === 0 || result[0] === 0)
-                next("Error : Fail to save new user");
+            if (!result || result.length === 0 || result[0] === 0) {
+                const error = new Error("Fail to save new user");
+                next(error);
+            }
 
             return res.status(201).json(result);
         })
@@ -17,11 +19,11 @@ module.exports.create = function (req, res, next) {
 module.exports.getAll = function (req, res, next) {
     User.findAll()
         .then((result) => {
-            if (!result || result.length === 0 || result[0] === 0)
-                return res.status(404).json({
-                    status: "Fail",
-                    message: "Users not found"
-                });
+            if (!result || result.length === 0 || result[0] === 0) {
+                res.status(404);
+                const error = new Error("Users not found");
+                next(error);
+            }
 
             return res.status(200).json(result);
         })
@@ -33,11 +35,11 @@ module.exports.getAll = function (req, res, next) {
 module.exports.getByID = function (req, res, next) {
     User.findByPk(req.params.id)
         .then((result) => {
-            if (!result || result.length === 0 || result[0] === 0)
-                return res.status(404).json({
-                    status: "Fail",
-                    message: `User not found`
-                });
+            if (!result || result.length === 0 || result[0] === 0) {
+                res.status(404);
+                const error = new Error("Users not found");
+                next(error);
+            }
 
             return res.status(200).json(result);
         })
@@ -52,11 +54,11 @@ module.exports.update = function (req, res, next) {
             id: req.params.id
         }
     }).then((result) => {
-        if (!result || result.length === 0 || result[0] === 0)
-            return res.status(404).json({
-                status: "Fail",
-                message: `User not found`
-            });
+        if (!result || result.length === 0 || result[0] === 0) {
+            res.status(404);
+            const error = new Error("Users not found");
+            next(error);
+        }
 
         return res.status(200).json({
             status: "Success",
@@ -73,11 +75,11 @@ module.exports.delete = function (req, res, next) {
             id: req.params.id,
         }
     }).then((result) => {
-        if (!result || result.length === 0 || result[0] === 0)
-            return res.status(404).json({
-                status: "Fail",
-                message: `User not found`
-            });
+        if (!result || result.length === 0 || result[0] === 0) {
+            res.status(404);
+            const error = new Error("Users not found");
+            next(error);
+        }
 
         return res.status(200).json({
             status: "Success",

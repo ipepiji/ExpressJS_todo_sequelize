@@ -2,16 +2,20 @@ require('dotenv').config();
 
 let express = require('express');
 let cors = require('cors');
+let helmet = require("helmet");
 
 let database = require('./database');
 let middlewares = require('./middlewares');
 let routes = require('./routes');
+
 
 let app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
+
+app.use(helmet());
 app.use(cors());
 
 app.use((req, res, next) => {
@@ -20,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res, next) => {
-    res.status(200).json({
+    return res.status(200).json({
         status: "Success",
         message: "Health Check, OK!"
     });
@@ -29,16 +33,13 @@ app.get('/', (req, res, next) => {
 app.get('/connection/db', async (req, res, next) => {
     let conn = await database.connect();
     if (conn === "success")
-        res.status(200).json({
+        return res.status(200).json({
             status: "Success",
             message: "Database Connection Check, OK!"
         });
     else {
-        const err = {
-            message: "Database Connection Check, Fail!",
-            stack: "Please check error log files"
-        };
-        next(err);
+        const error = new Error("Database Connection Check, Fail!");
+        next(error);
     }
 })
 
