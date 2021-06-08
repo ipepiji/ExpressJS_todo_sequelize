@@ -8,7 +8,6 @@ let database = require('./database');
 let middlewares = require('./middlewares');
 let routes = require('./routes');
 
-
 let app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -20,7 +19,7 @@ app.use(cors());
 
 app.use((req, res, next) => {
     console.info(`${new Date().toISOString()} => ${req.method} ${req.originalUrl}`);
-    next();
+    return next();
 });
 
 app.get('/', (req, res, next) => {
@@ -39,7 +38,7 @@ app.get('/connection/db', async (req, res, next) => {
         });
     else {
         const error = new Error("Database Connection Check, Fail!");
-        next(error);
+        return next(error);
     }
 })
 

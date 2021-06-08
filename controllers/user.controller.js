@@ -6,13 +6,13 @@ module.exports.create = function (req, res, next) {
         .then((result) => {
             if (!result || result.length === 0 || result[0] === 0) {
                 const error = new Error("Fail to save new user");
-                next(error);
+                return next(error);
             }
 
             return res.status(201).json(result);
         })
-        .catch((err) => {
-            next(err);
+        .catch((error) => {
+            return next(error);
         });
 }
 
@@ -22,13 +22,13 @@ module.exports.getAll = function (req, res, next) {
             if (!result || result.length === 0 || result[0] === 0) {
                 res.status(404);
                 const error = new Error("Users not found");
-                next(error);
+                return next(error);
             }
 
             return res.status(200).json(result);
         })
-        .catch((err) => {
-            next(err);
+        .catch((error) => {
+            return next(error);
         });
 }
 
@@ -37,14 +37,14 @@ module.exports.getByID = function (req, res, next) {
         .then((result) => {
             if (!result || result.length === 0 || result[0] === 0) {
                 res.status(404);
-                const error = new Error("Users not found");
-                next(error);
+                const error = new Error("User not found");
+                return next(error);
             }
 
             return res.status(200).json(result);
         })
-        .catch((err) => {
-            next(err);
+        .catch((error) => {
+            return next(error);
         });
 }
 
@@ -56,16 +56,16 @@ module.exports.update = function (req, res, next) {
     }).then((result) => {
         if (!result || result.length === 0 || result[0] === 0) {
             res.status(404);
-            const error = new Error("Users not found");
-            next(error);
+            const error = new Error("User not found");
+            return next(error);
         }
 
         return res.status(200).json({
             status: "Success",
             message: `User updated!`
         });
-    }).catch((err) => {
-        next(err);
+    }).catch((error) => {
+        return next(error);
     });
 }
 
@@ -77,15 +77,15 @@ module.exports.delete = function (req, res, next) {
     }).then((result) => {
         if (!result || result.length === 0 || result[0] === 0) {
             res.status(404);
-            const error = new Error("Users not found");
-            next(error);
+            const error = new Error("User not found");
+            return next(error);
         }
 
         return res.status(200).json({
             status: "Success",
             message: `User deleted!`
         });
-    }).catch((err) => {
-        next(err);
+    }).catch((error) => {
+        return next(error);
     });
 }

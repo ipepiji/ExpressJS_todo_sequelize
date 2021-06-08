@@ -11,8 +11,8 @@ module.exports.validateBody = function (req, res, next) {
 
         const error = new Error(msg);
         res.status(400);
-        next(error);
+        return next(error);
     }
 
-    next();
+    return next();
 }
