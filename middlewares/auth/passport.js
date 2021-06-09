@@ -14,13 +14,13 @@ module.exports = function (passport) {
             function (jwtPayload, done) {
                 if (jwtPayload.id) {
                     User.findByPk(jwtPayload.id)
-                        .then((result) => {
-                            if (!result || result.length === 0 || result[0] === 0) {
+                        .then((user) => {
+                            if (!user || user.length === 0 || user[0] === 0) {
                                 const error = new Error("Invalid Payload");
                                 return done(error, false);
                             }
 
-                            return done(null, result);
+                            return done(null, user);
                         })
                         .catch((error) => {
                             return done(error, false);

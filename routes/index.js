@@ -7,6 +7,7 @@ require("../middlewares/auth/passport")(passport);
 
 const router = express.Router();
 
-router.use("/user", passport.authenticate("jwt", { session: false }), userApi);
+router.use("/user", userApi.unprotected);
+router.use("/user", passport.authenticate("jwt", { session: false }), userApi.protected);
 
 module.exports = router;

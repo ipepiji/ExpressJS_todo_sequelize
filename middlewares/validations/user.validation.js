@@ -1,17 +1,59 @@
-module.exports.validateBody = function (req, res, next) {
-    if (Object.keys(req.body).length === 0 || !req.body.name || !req.body.email) {
-        let msg;
+let { body, validationResult } = require('express-validator');
 
-        if (Object.keys(req.body).length === 0)
-            msg = "Missing request body";
-        else if (!req.body.name)
-            msg = "Missing request body - name";
-        else if (!req.body.email)
-            msg = "Missing request body - email";
+module.exports.validate = (method) => {
+    switch (method) {
+        case "register": {
+            return [
+                body("name")
+                    .exists().withMessage('Name field is required'),
+                body("email")
+                    .exists().withMessage('Email field is required')
+                    .isEmail().withMessage('Invalid email format'),
+                body("password")
+                    .exists().withMessage('Password field is required')
+            ]
+        }
+        case "login": {
+            return [
+                body("email")
+                    .exists().withMessage('Email field is required')
+                    .isEmail().withMessage('Invalid email format'),
+                body("password")
+                    .exists().withMessage('Password field is required')
+            ]
+        }
+        case "create": {
+            return [
+                body("name")
+                    .exists().withMessage('Name field is required'),
+                body("email")
+                    .exists().withMessage('Email field is required')
+                    .isEmail().withMessage('Invalid email format'),
+                body("password")
+                    .exists().withMessage('Password field is required')
+            ]
+        }
+        case "update": {
+            return [
+                body("name")
+                    .optional(),
+                body("email")
+                    .optional()
+                    .isEmail().withMessage('Invalid email format'),
+                body("password")
+                    .optional()
+            ]
+        }
+    }
+}
 
-        const error = new Error(msg);
-        res.status(400);
-        return next(error);
+module.exports.checkValidationResult = function (req, res, next) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array({ onlyFirstError: true })
+        });
     }
 
     return next();

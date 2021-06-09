@@ -1,15 +1,29 @@
 let express = require('express');
-let user = express.Router();
+let protected = express.Router();
+let unprotected = express.Router();
 let controller = require('../controllers/user.controller.js');
 let { validations } = require('../middlewares');
 
-user.route('/')
+// PROTECTED
+protected.route('/')
     .get(controller.getAll)
-    .post(validations.user.validateBody, controller.create);
+    .post(validations.user.validate('create'), validations.user.checkValidationResult, controller.create);
 
-user.route('/:id')
+protected.route('/:id')
     .get(controller.getByID)
-    .put(validations.user.validateBody, controller.update)
+    .put(validations.user.validate('update'), validations.user.checkValidationResult, controller.update)
     .delete(controller.delete);
 
-module.exports = user;
+
+// UNPROTECTED
+unprotected.route('/register')
+    .post(validations.user.validate('register'), validations.user.checkValidationResult, controller.register);
+
+unprotected.route('/login')
+    .post(validations.user.validate('login'), validations.user.checkValidationResult, controller.login);
+
+
+module.exports = {
+    protected,
+    unprotected
+};
